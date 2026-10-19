@@ -1,0 +1,17 @@
+{
+  "source_columns": [
+    {"name": "phone", "samples": ["+1 555-0100", "555-0199"]},
+    {"name": "contact", "samples": ["a@example.com", "b@example.com"]},
+    {"name": "Cust Name", "samples": ["Jane Doe", "John Smith"]}
+  ],
+  "target_fields": [
+    {"id": "phone_number", "aliases": ["phone"], "expected_semantic_type": "phone"},
+    {"id": "email", "aliases": ["e-mail"], "expected_semantic_type": "email"},
+    {"id": "full_name", "aliases": ["name", "customer name"], "expected_semantic_type": "freetext"}
+  ],
+  "expect_mappings": {
+    "phone": "phone_number",
+    "contact": "email",
+    "Cust Name": "full_name"
+  }
+}
