@@ -22,6 +22,7 @@ class TargetField:
     aliases: Sequence[str] = ()
     expected_semantic_type: str | None = None
     description: str | None = None
+    exemplar_samples: Sequence[str] = ()
 
 
 @dataclass(frozen=True, slots=True)

@@ -37,14 +37,11 @@ Each detector returns match rate on the sample and a reason string for debugging
 
 ## Value intent (homonym disambiguation)
 
-When two source columns score high for the same target type or label:
+General-purpose only:
 
-1. Sample up to *N* non-null distinct values per column.
-2. Classify each column’s value distribution with lightweight features (length, digit ratio, uppercase ratio, token count, regex hits).
-3. Compare to prototype sketches for field intents (product title vs person name vs organization name). Use embedding of `field_id + top values` only when the optional semantic extra is installed.
-4. Boost the column whose intent matches the target field description or expected type.
-
-Sherlock and Sato motivate value-side typing ([research-semantic-similarity.md](./research-semantic-similarity.md)). v1 can use rules plus embeddings without full Sherlock reimplementation.
+1. Build a **value signature** per column (semantic type + format stats + dominant token prefix).
+2. Compare to **field expectation** from `expected_semantic_type` (generic type profile), `exemplar_samples` (integrator-provided), and optional description embedding when `[semantic]` is installed.
+3. No sector keywords in core code. See ADR `docs/adr/0001-value-intent-via-signatures.md`.
 
 ## Assignment
 

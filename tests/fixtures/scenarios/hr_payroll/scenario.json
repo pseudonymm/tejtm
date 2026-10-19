@@ -1,0 +1,16 @@
+{
+  "sector": "hr",
+  "data_file": "data.csv",
+  "data_format": "csv",
+  "min_confidence": 0.4,
+  "expect_mappings": {
+    "Employee ID": "worker_id",
+    "Gross Pay": "gross_amount",
+    "Pay Period End": "period_end"
+  },
+  "target_fields": [
+    {"id": "worker_id", "aliases": ["employee id", "emp id"], "expected_semantic_type": "integer"},
+    {"id": "gross_amount", "expected_semantic_type": "currency"},
+    {"id": "period_end", "expected_semantic_type": "date"}
+  ]
+}

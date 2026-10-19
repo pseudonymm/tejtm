@@ -1,0 +1,16 @@
+{
+  "sector": "warehouse",
+  "data_file": "data.csv",
+  "data_format": "csv",
+  "min_confidence": 0.4,
+  "expect_mappings": {
+    "SKU": "item_code",
+    "Qty On Hand": "quantity",
+    "Bin Loc": "storage_location"
+  },
+  "target_fields": [
+    {"id": "item_code", "aliases": ["sku", "item"], "expected_semantic_type": "freetext", "exemplar_samples": ["WH-1001", "BIN-42A"]},
+    {"id": "quantity", "aliases": ["qty", "count"], "expected_semantic_type": "integer"},
+    {"id": "storage_location", "aliases": ["location", "bin"], "expected_semantic_type": "freetext", "exemplar_samples": ["A-01-02", "C-12-08"]}
+  ]
+}

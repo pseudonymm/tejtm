@@ -27,4 +27,4 @@ for m in result.mappings:
     print(m.source_column, "->", m.target_field, m.confidence)
 ```
 
-See [writeups/specs/schema-mapping-spec.md](writeups/specs/schema-mapping-spec.md) and [writeups/README.md](writeups/README.md).
+See [docs/specs/schema-mapping-spec.md](docs/specs/schema-mapping-spec.md) and [docs/README.md](docs/README.md).

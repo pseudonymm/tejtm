@@ -1,38 +1,21 @@
-import json
-from pathlib import Path
-
 from tejtm.engine import MappingEngine
 from tejtm.models import MappingConfig, SourceColumn, SourceProfile, TargetField, TargetSchema
+from support.loaders import load_scenario, source_profile_from_scenario, target_schema_from_scenario
 
-FIXTURES = Path(__file__).parent / "fixtures" / "golden"
+SCENARIO = (
+    __import__("pathlib").Path(__file__).parent / "fixtures" / "scenarios" / "crm_contacts"
+)
 
 
-def _load(name: str) -> dict:
-    return json.loads((FIXTURES / name).read_text())
-
-
-def test_golden_basic_import():
-    data = _load("basic_import.json")
-    source = SourceProfile(
-        columns=[
-            SourceColumn(name=c["name"], samples=tuple(c.get("samples", [])))
-            for c in data["source_columns"]
-        ]
+def test_legacy_golden_alias_of_crm_scenario():
+    meta = load_scenario(SCENARIO)
+    source = source_profile_from_scenario(SCENARIO, meta)
+    target = target_schema_from_scenario(meta)
+    result = MappingEngine().propose_mappings(
+        source, target, config=MappingConfig(min_confidence=0.45)
     )
-    target = TargetSchema(
-        fields=[
-            TargetField(
-                id=f["id"],
-                aliases=tuple(f.get("aliases", [])),
-                expected_semantic_type=f.get("expected_semantic_type"),
-            )
-            for f in data["target_fields"]
-        ]
-    )
-    engine = MappingEngine()
-    result = engine.propose_mappings(source, target, config=MappingConfig(min_confidence=0.45))
     got = {m.source_column: m.target_field for m in result.mappings}
-    for src, tgt in data["expect_mappings"].items():
+    for src, tgt in meta["expect_mappings"].items():
         assert got.get(src) == tgt
 
 

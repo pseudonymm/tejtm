@@ -1,0 +1,16 @@
+{
+  "sector": "finance",
+  "data_file": "data.xlsx",
+  "data_format": "xlsx",
+  "min_confidence": 0.4,
+  "expect_mappings": {
+    "Txn Date": "posted_date",
+    "Amount USD": "amount",
+    "GL Code": "ledger_account"
+  },
+  "target_fields": [
+    {"id": "posted_date", "aliases": ["txn date", "transaction date"], "expected_semantic_type": "date"},
+    {"id": "amount", "expected_semantic_type": "currency"},
+    {"id": "ledger_account", "expected_semantic_type": "integer", "exemplar_samples": ["4100", "5200"]}
+  ]
+}

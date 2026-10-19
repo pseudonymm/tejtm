@@ -32,7 +32,15 @@ Similarity between source column name text and target field name or alias text. 
 
 ## Value intent
 
-Inference of field meaning from value patterns when headers are ambiguous. Example: two columns named `name` where one holds product SKUs and one holds person names.
+Inference of field meaning from value patterns when headers are ambiguous. The library uses value signatures and integrator metadata, not sector-specific rules.
+
+## Value signature
+
+A compact summary of a column’s sample values: detected semantic type plus format statistics (length, digit ratio, uniqueness, and similar measures).
+
+## Exemplar samples
+
+Optional example values on a target field. They describe what correct data should look like when headers are generic or duplicated.
 
 ## Scorer
 

@@ -1,0 +1,16 @@
+{
+  "sector": "crm",
+  "data_file": "data.csv",
+  "data_format": "csv",
+  "min_confidence": 0.45,
+  "expect_mappings": {
+    "phone": "phone_number",
+    "contact": "email",
+    "Cust Name": "full_name"
+  },
+  "target_fields": [
+    {"id": "phone_number", "aliases": ["phone"], "expected_semantic_type": "phone"},
+    {"id": "email", "aliases": ["e-mail"], "expected_semantic_type": "email"},
+    {"id": "full_name", "aliases": ["name", "customer name"], "expected_semantic_type": "freetext"}
+  ]
+}

@@ -47,13 +47,13 @@ A small Python library that accepts a **source column profile** (names + value s
 
 - **Public entry:** `MappingEngine` with `propose_mappings(source: SourceProfile, target: TargetSchema, *, config: MappingConfig | None) -> MappingResult`.
 - **Source profile:** Ordered list of `SourceColumn(name, samples: Sequence[str], optional stats cache)`.
-- **Target schema:** List of `TargetField(id, labels, aliases, optional expected_semantic_type, optional description for intent)`.
+- **Target schema:** List of `TargetField(id, labels, aliases, optional expected_semantic_type, optional description, optional exemplar_samples)`.
 - **Scorers:** Protocol `Scorer.score(column, field, context) -> ScorerResult | None`. Built-ins: ExactName, FuzzyName, SemanticType, HeaderEmbedding (optional), ValueIntent (conditional).
 - **Aggregation:** Weighted average over non-abstaining scorers; weights from `MappingConfig.weights` with documented defaults matching [architecture-frontier.md](../architecture-frontier.md).
 - **Assignment:** Hungarian algorithm on score matrix (scipy `linear_sum_assignment` when available); respect `min_confidence`; produce unmapped/unmatched lists.
 - **Normalization:** Shared `normalize_identifier(text) -> str` used by all name scorers; tokenization for camel/snake.
 - **Type detection:** `ColumnTyper.detect(samples) -> TypeGuess(label, confidence, evidence)` with pluggable registry; built-in catalog per research doc.
-- **Value intent:** Trigger when top-two header scores for a field differ by less than `intent_margin`; compare value sketches to field description embedding or rule templates.
+- **Value intent:** Compare column value signatures to generic type profiles, field `exemplar_samples`, and optional description embeddings. No sector-specific keyword rules in core code.
 - **Embeddings:** Lazy import of FastEmbed when `[semantic]` installed; cache field-side embeddings per `TargetSchema` instance.
 - **Persistence:** `MappingResult.to_dict()` / `from_dict()` and optional YAML helper in `[yaml]` extra; not required for core.
 - **Coercion:** `tejtm.coercion.coerce_value(value, semantic_type)` and `coerce_record(record, field_types)` for post-map cell casting (email/url left as str; dates via `datetime.date.fromisoformat` where possible).
@@ -66,7 +66,7 @@ A small Python library that accepts a **source column profile** (names + value s
 
 - **Seams:** (1) **Engine integration:** `MappingEngine.propose_mappings` for end-to-end mapping, unmapped lists, and thresholds. (2) **Public scorer contracts:** Each built-in `Scorer` is part of the stable API; each has golden table tests for `score(column, field, context)` on fixed inputs (normalization edge cases, abstain when optional deps missing, score in `[0,1]`).
 - **Good tests:** Engine tests use table-driven `SourceProfile` + `TargetSchema` fixtures (homonyms, alias wins, `contact`→email via types). Scorer tests stay independent of assignment so custom scorers can mirror the same contract tests.
-- **Prior art:** pytest; small fixtures in `tests/fixtures/`; avoid pandas in core tests if possible.
+- **Prior art:** pytest; sector scenarios under `tests/fixtures/scenarios/` with CSV/XLSX data and `scenario.json` manifests; loaders in `tests/support/` only (library does not read files).
 - **Property tests (optional later):** Assignment never maps two sources to one target; aggregated confidence in `[0,1]`.
 - **Modules under test:** `engine`, `assignment`, each module under `scorers/`, `typing.detectors`, `normalize`.
 
@@ -81,7 +81,7 @@ A small Python library that accepts a **source column profile** (names + value s
 
 ## Further Notes
 
-- Research basis: [writeups/README.md](../README.md).
+- Research basis: [docs/README.md](../README.md).
 - Resolved: Hungarian one-to-one + `min_confidence`; v1 includes coercion helpers and Pydantic adapter; embeddings behind `[semantic]`.
 - Competitor positioning: complementary to tabmodel (Pydantic import) and infermap (file-first); this library targets schema-to-schema with maximal transparency.
 - Suggested package layout: `src/tejtm/` with `engine.py`, `models.py`, `scorers/`, `typing/`, `assignment.py`, `normalize.py`.

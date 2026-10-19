@@ -1,0 +1,16 @@
+{
+  "sector": "healthcare",
+  "data_file": "data.csv",
+  "data_format": "csv",
+  "min_confidence": 0.4,
+  "expect_mappings": {
+    "MRN": "patient_identifier",
+    "Appt Time": "appointment_at",
+    "Clinic": "facility_name"
+  },
+  "target_fields": [
+    {"id": "patient_identifier", "expected_semantic_type": "integer", "exemplar_samples": ["90001234", "90004567"]},
+    {"id": "appointment_at", "expected_semantic_type": "datetime"},
+    {"id": "facility_name", "expected_semantic_type": "freetext"}
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "sector": "edge",
+  "data_file": "data.csv",
+  "data_format": "csv",
+  "min_confidence": 0.35,
+  "expect_mappings": {
+    "ref_a": "order_reference",
+    "ref_b": "shipment_reference"
+  },
+  "target_fields": [
+    {
+      "id": "order_reference",
+      "expected_semantic_type": "freetext",
+      "exemplar_samples": ["ORD-1001", "ORD-1002"]
+    },
+    {
+      "id": "shipment_reference",
+      "expected_semantic_type": "freetext",
+      "exemplar_samples": ["SHP-9001", "SHP-9002"]
+    }
+  ]
+}
