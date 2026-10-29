@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Build tejtm from this checkout and upload to PyPI.
-# Bump [project].version in pyproject.toml first. Re-uploading an existing
-# version fails on PyPI.
+# Bump [project].version in pyproject.toml first. PyPI rejects a filename that
+# was already used (HTTP 400 File already exists), even with identical bytes.
 #
 # Usage:
 #   ./scripts/publish-pypi.sh           # build, check, upload
@@ -45,6 +45,30 @@ PY
 if [[ -n "$(git status --porcelain)" ]]; then
   echo "warning: working tree is dirty; artifacts will include uncommitted files" >&2
 fi
+
+"$PYTHON" - <<PY
+import json
+import sys
+import urllib.error
+import urllib.request
+
+version = ${version@Q}
+url = "https://pypi.org/pypi/tejtm/json"
+try:
+    with urllib.request.urlopen(url, timeout=30) as resp:
+        data = json.load(resp)
+except urllib.error.HTTPError as exc:
+    if exc.code == 404:
+        sys.exit(0)
+    raise
+if version in data.get("releases", {}):
+    print(
+        f"error: tejtm=={version} is already on PyPI; "
+        f"bump [project].version in pyproject.toml before uploading",
+        file=sys.stderr,
+    )
+    sys.exit(1)
+PY
 
 "$PYTHON" -m pip install -q build
 rm -rf dist build

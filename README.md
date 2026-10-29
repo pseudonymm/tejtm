@@ -22,7 +22,7 @@ From a clone, for local development:
 pip install -e ".[dev]"
 ```
 
-Published package: [tejtm 0.1.0 on PyPI](https://pypi.org/project/tejtm/0.1.0/). Linked docs under `docs/` resolve on GitHub, not on the PyPI project page.
+Published package: [tejtm on PyPI](https://pypi.org/project/tejtm/). Linked docs under `docs/` resolve on GitHub, not on the PyPI project page.
 
 ## Map columns to a target schema
 
