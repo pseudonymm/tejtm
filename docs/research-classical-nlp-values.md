@@ -20,7 +20,7 @@ Research note for **leftover cheap non-neural signals** that compare **sample ce
 
 Instance **set overlap**, **TF-IDF column vectors**, and **character n-gram profiles of cell text** are named in the gap inventory but are **not** in `value_profile.py`. Header trigrams and RapidFuzz name metrics are wired elsewhere and are out of scope here.
 
-**Architectural constraint.** Valentine and COMA instance matchers usually compare **two populated columns** ([Valentine matchers — Coma instance](https://delftdata.github.io/valentine/matchers/), [COMA PDF](https://dbs.uni-leipzig.de/files/research/publications/2002-1/pdf/COMA.pdf) as cited in [research-prior-art.md](./research-prior-art.md)). tejtm’s target side is mostly **metadata** plus optional **`exemplar_samples`**, not a full reference column. Any instance method must say what it compares on the field side.
+**Architectural constraint.** Valentine and COMA instance matchers usually compare **two populated columns** ([Valentine matchers, Coma instance](https://delftdata.github.io/valentine/matchers/), [COMA PDF](https://dbs.uni-leipzig.de/files/research/publications/2002-1/pdf/COMA.pdf) as cited in [research-prior-art.md](./research-prior-art.md)). tejtm’s target side is mostly **metadata** plus optional **`exemplar_samples`**, not a full reference column. Any instance method must say what it compares on the field side.
 
 ---
 
@@ -28,7 +28,7 @@ Instance **set overlap**, **TF-IDF column vectors**, and **character n-gram prof
 
 **`value_signature`** summarizes each column (or exemplar list) into one struct. It does not retain individual cell strings after prefix bucketing, so two columns with the same stats but different literals can score identically.
 
-**`ValueIntentScorer`** does not fuse overlap into the weighted engine mean as its own scorer. It contributes one **max** subscore per column–field pair. Methods that only help when exemplars exist compete with `exemplar:{sim}` from `signature_similarity`, not with name or `semantic_type` unless you add a new scorer and weight.
+**`ValueIntentScorer`** does not fuse overlap into the weighted engine mean as its own scorer. It contributes one **max** subscore per column to field pair. Methods that only help when exemplars exist compete with `exemplar:{sim}` from `signature_similarity`, not with name or `semantic_type` unless you add a new scorer and weight.
 
 **Sherlock ([SHERLOCK] in [primary-sources.md](./primary-sources.md)).** The published system uses **1,588** hand-crafted features per column (statistics, character distributions, GloVe, paragraph vectors) fed to a **deep network**. The abstract reports support-weighted **F1 ≈ 0.89** on a 78-type task. That full stack violates this note’s bar (neural head, embedding tables, training corpus). This note only considers **non-neural slices** of the same feature families on **values**.
 
@@ -36,7 +36,7 @@ Instance **set overlap**, **TF-IDF column vectors**, and **character n-gram prof
 
 ## Methods not wired (value-sample focus)
 
-Complexity uses **S** = number of sample strings per column (fixtures: 2–3 rows), **T** = exemplar count when present, **L** = average string length, **P** = source columns × target fields scored, **V** = distinct tokens or n-grams in the run. Latency is **order-of-magnitude inference** from algorithm bounds and Valentine’s Coma performance note (schema-only vs `use_instances=True` on ~100 columns). **No in-process timings were run in this worktree.**
+Complexity uses **S** = number of sample strings per column (fixtures: 2 or 3 rows), **T** = exemplar count when present, **L** = average string length, **P** = source columns × target fields scored, **V** = distinct tokens or n-grams in the run. Latency is **order-of-magnitude inference** from algorithm bounds and Valentine’s Coma performance note (schema-only vs `use_instances=True` on ~100 columns). **No in-process timings were run in this worktree.**
 
 ### 1. Exact value-set Jaccard (normalized cell strings)
 
@@ -52,7 +52,7 @@ Complexity uses **S** = number of sample strings per column (fixtures: 2–3 row
 
 ### 2. Token-set Jaccard on cell values
 
-**Idea.** Split each cell on whitespace (or a small separator set); Jaccard over **token multisets** or sets aggregated across rows ([Jaccard index](https://en.wikipedia.org/wiki/Jaccard_index); COMA n-gram family on strings in [research-string-heuristics.md §4.3–§5](./research-string-heuristics.md)).
+**Idea.** Split each cell on whitespace (or a small separator set); Jaccard over **token multisets** or sets aggregated across rows ([Jaccard index](https://en.wikipedia.org/wiki/Jaccard_index); COMA n-gram family on strings in [research-string-heuristics.md §4.3 and §5](./research-string-heuristics.md)).
 
 | | |
 | --- | --- |
@@ -64,7 +64,7 @@ Complexity uses **S** = number of sample strings per column (fixtures: 2–3 row
 
 ### 3. Fuzzy value-set Jaccard / Tversky (Valentine `JaccardDistanceMatcher` lineage)
 
-**Idea.** Treat each distinct sample as a set element; declare two values equal if Levenshtein, Jaro–Winkler, or another string distance exceeds a threshold; compute Jaccard or Tversky ([Valentine README — JaccardDistanceMatcher](https://raw.githubusercontent.com/delftdata/valentine/master/README.md)).
+**Idea.** Treat each distinct sample as a set element; declare two values equal if Levenshtein, Jaro-Winkler, or another string distance exceeds a threshold; compute Jaccard or Tversky ([Valentine README, JaccardDistanceMatcher](https://raw.githubusercontent.com/delftdata/valentine/master/README.md)).
 
 | | |
 | --- | --- |
@@ -76,11 +76,11 @@ Complexity uses **S** = number of sample strings per column (fixtures: 2–3 row
 
 ### 4. TF-IDF instance matching (COMA / Valentine Coma `use_instances=True`)
 
-**Idea.** Each cell value is a “document”; build a global IDF over all values in scope; form a sparse vector per column; cosine similarity between columns, aggregated with a max-matching Dice-style formula ([Valentine README](https://raw.githubusercontent.com/delftdata/valentine/master/README.md); [Valentine matchers — Coma instance](https://delftdata.github.io/valentine/matchers/)).
+**Idea.** Each cell value is a “document”; build a global IDF over all values in scope; form a sparse vector per column; cosine similarity between columns, aggregated with a max-matching Dice-style formula ([Valentine README](https://raw.githubusercontent.com/delftdata/valentine/master/README.md); [Valentine matchers, Coma instance](https://delftdata.github.io/valentine/matchers/)).
 
 | | |
 | --- | --- |
-| Complexity | **O(total cells · L)** to tokenize and count; **O(V)** vocabulary; **O(P · dim)** for column–field comparisons if field side is a pseudo-column of exemplars or reference values. |
+| Complexity | **O(total cells · L)** to tokenize and count; **O(V)** vocabulary; **O(P · dim)** for column to field comparisons if field side is a pseudo-column of exemplars or reference values. |
 | In-process latency | Valentine documents Coma with instances as **roughly tens of milliseconds to seconds** once column counts reach **~100** with instances enabled; fixture grids (**≤3 × ≤3** pairs, **≤3** rows) would be **far smaller** if implemented with the same shape. Dominant cost is **building the corpus once per `propose_mappings` call**, not per pair. |
 | vs wired | Captures **shared rare tokens** across columns (COMA instance lineage in [research-prior-art.md](./research-prior-art.md)). tejtm already down-weights generic tokens via semantic typing for structured formats. Does not replace `expectation_from_type` profiles. |
 | Fixture plausibility at **0.55** | **Inferred.** Three-row tables give **tiny IDF**; `@` in emails and shared date patterns may correlate columns but **`semantic_type` already uses those patterns**. Unlikely to lift **`contact` → `email`** by 0.001 without also changing weights. **`Clinic` → `facility_name`** needs name or semantic lift, not shared tokens alone. |
@@ -100,12 +100,12 @@ Complexity uses **S** = number of sample strings per column (fixtures: 2–3 row
 
 ### 6. Distribution-based histogram matching (`DistributionBased`)
 
-**Idea.** Quantile histograms per column and Earth Mover’s Distance, instances only ([Valentine matchers — DistributionBased](https://delftdata.github.io/valentine/matchers/); SIGMOD 2011 paper linked there).
+**Idea.** Quantile histograms per column and Earth Mover’s Distance, instances only ([Valentine matchers, DistributionBased](https://delftdata.github.io/valentine/matchers/); SIGMOD 2011 paper linked there).
 
 | | |
 | --- | --- |
 | Complexity | Histogram bins over numeric or categorical domains; EMD **superlinear** in bin count; clustering phases in the reference algorithm. |
-| In-process latency | Heavy relative to other rows in this table for **S = 2–3** samples (unstable histograms). |
+| In-process latency | Heavy relative to other rows in this table for **S = 2 or 3** samples (unstable histograms). |
 | vs wired | `ValueSignature` already carries coarse numeric shape via digit ratio and avg length. |
 | Fixture plausibility at **0.55** | **Inferred.** Poor fit for tiny samples; no fixture requires EMD to disambiguate. |
 | **Verdict** | **Reject** for tejtm core at current sample sizes. |
