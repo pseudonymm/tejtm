@@ -25,13 +25,15 @@ This mirrors COMA-style composition ([COMA PDF](https://dbs.uni-leipzig.de/files
 | FuzzyName | Jaro-Winkler, ratio, token_sort, token_set max or blend | 0.45 | See [research-string-heuristics.md](./research-string-heuristics.md) |
 | SemanticType | Agreement between detected source type and field expectation | 0.25 | See [research-type-detection.md](./research-type-detection.md) |
 | HeaderEmbedding | Cosine similarity of column name vs field name+aliases | 0.20 | Optional extra; see [research-semantic-similarity.md](./research-semantic-similarity.md) |
-| ValueIntent | Agreement when types collide (e.g. two `name` columns) | 0.30 | Runs only when header scores are tied; uses value features |
+| ValueIntent | Value signature versus type profile or `exemplar_samples` | 0.30 | Runs on every pair that has a signature. Not gated on header ties. |
 
-Weights are user-tunable. A scorer that abstains does not contribute to the denominator.
+Weights are user-tunable. A scorer that returns `None` does not enter the denominator. A score of `0.0` still does.
 
 ## Semantic type catalog (built-in)
 
-`boolean`, `integer`, `number`, `freetext`, `email`, `phone`, `url`, `uuid`, `date`, `datetime`, `time`, `currency`, `postal_code`, `country_code`, `address_line`.
+Implemented by `detect_semantic_type`: `boolean`, `integer`, `number`, `freetext`, `email`, `phone`, `url`, `uuid`, `date`, `datetime`, `time`, `currency`.
+
+Not implemented: `postal_code`, `country_code`, `address_line`. Use aliases, exemplars, or a custom scorer.
 
 Each detector returns match rate on the sample and a reason string for debugging.
 

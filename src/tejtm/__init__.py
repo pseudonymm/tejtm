@@ -1,6 +1,7 @@
 from tejtm.coercion import coerce_record, coerce_value
 from tejtm.engine import MappingEngine
 from tejtm.models import (
+    DEFAULT_WEIGHTS,
     FieldMapping,
     MappingConfig,
     MappingResult,
@@ -15,6 +16,7 @@ from tejtm.models import (
 __all__ = [
     "coerce_record",
     "coerce_value",
+    "DEFAULT_WEIGHTS",
     "FieldMapping",
     "MappingConfig",
     "MappingEngine",

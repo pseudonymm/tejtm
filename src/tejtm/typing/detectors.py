@@ -16,7 +16,10 @@ _PHONE = re.compile(r"^\+?[\d\s().-]{7,}$")
 _DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 _DATETIME = re.compile(r"^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}")
 _TIME = re.compile(r"^\d{1,2}:\d{2}(:\d{2})?$")
-_CURRENCY = re.compile(r"^[\$€£]?\s?-?\d{1,3}(?:,\d{3})*(?:\.\d+)?$|^-?\d+(?:\.\d+)?$")
+_CURRENCY = re.compile(
+    r"^[\$€£]\s*-?\d{1,3}(?:,\d{3})*(?:\.\d+)?$|"
+    r"^-?\d{1,3}(?:,\d{3})+(?:\.\d+)?$"
+)
 _BOOL = {"true", "false", "yes", "no", "0", "1", "y", "n"}
 
 
@@ -58,10 +61,14 @@ def detect_semantic_type(samples: Sequence[str]) -> TypeGuess:
 
 
 def _is_phone(value: str) -> bool:
+    if _DATE.match(value) or _DATETIME.match(value) or _TIME.match(value):
+        return False
     if not _PHONE.match(value):
         return False
     digits = sum(c.isdigit() for c in value)
-    return digits >= 7
+    if digits < 7:
+        return False
+    return not value.isdigit()
 
 
 def _is_int(value: str) -> bool:
@@ -98,6 +105,8 @@ def type_compatibility(source: TypeGuess, expected: str | None) -> float:
         ("number", "integer"),
         ("datetime", "date"),
         ("date", "datetime"),
+        ("number", "currency"),
+        ("currency", "number"),
     }
     if (source.label, expected) in compatible:
         return 0.6 * source.confidence

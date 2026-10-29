@@ -1,6 +1,11 @@
-# Schema mapping library — writeups
+# Schema mapping library writeups
 
-This folder holds research, the wayfinder map index, glossary, and product spec for a Python schema-mapping library (working name: **tejtm**).
+User-facing guides live next to this index. Start with the root [README](../README.md).
+
+- [How to customize mapping](./customization.md)
+- [About mapping limits](./limitations.md)
+
+This folder also holds research, the wayfinder map index, glossary, and the product spec.
 
 ## Documents
 

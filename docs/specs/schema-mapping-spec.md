@@ -48,7 +48,7 @@ A small Python library that accepts a **source column profile** (names + value s
 - **Public entry:** `MappingEngine` with `propose_mappings(source: SourceProfile, target: TargetSchema, *, config: MappingConfig | None) -> MappingResult`.
 - **Source profile:** Ordered list of `SourceColumn(name, samples: Sequence[str], optional stats cache)`.
 - **Target schema:** List of `TargetField(id, labels, aliases, optional expected_semantic_type, optional description, optional exemplar_samples)`.
-- **Scorers:** Protocol `Scorer.score(column, field, context) -> ScorerResult | None`. Built-ins: ExactName, FuzzyName, SemanticType, HeaderEmbedding (optional), ValueIntent (conditional).
+- **Scorers:** Protocol `Scorer.score(column, field, context) -> ScorerResult | None`. Built-ins: ExactName, FuzzyName, SemanticType, HeaderEmbedding (optional), ValueIntent (runs when a value signature exists).
 - **Aggregation:** Weighted average over non-abstaining scorers; weights from `MappingConfig.weights` with documented defaults matching [architecture-frontier.md](../architecture-frontier.md).
 - **Assignment:** Hungarian algorithm on score matrix (scipy `linear_sum_assignment` when available); respect `min_confidence`; produce unmapped/unmatched lists.
 - **Normalization:** Shared `normalize_identifier(text) -> str` used by all name scorers; tokenization for camel/snake.

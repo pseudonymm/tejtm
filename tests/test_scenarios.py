@@ -19,3 +19,8 @@ def test_sector_scenario_mapping(scenario_dir):
     got = {m.source_column: m.target_field for m in result.mappings}
     for src, tgt in meta["expect_mappings"].items():
         assert got.get(src) == tgt, f"{scenario_dir.name}: {src} -> {got.get(src)} expected {tgt}"
+    sources = [m.source_column for m in result.mappings]
+    targets = [m.target_field for m in result.mappings]
+    assert len(sources) == len(set(sources))
+    assert len(targets) == len(set(targets))
+    assert all(0.0 <= m.confidence <= 1.0 for m in result.mappings)

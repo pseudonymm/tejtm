@@ -14,6 +14,11 @@ class SourceColumn:
 class SourceProfile:
     columns: Sequence[SourceColumn]
 
+    def __post_init__(self) -> None:
+        names = [c.name for c in self.columns]
+        if len(names) != len(set(names)):
+            raise ValueError("SourceProfile column names must be unique")
+
 
 @dataclass(frozen=True, slots=True)
 class TargetField:
@@ -28,6 +33,11 @@ class TargetField:
 @dataclass(frozen=True, slots=True)
 class TargetSchema:
     fields: Sequence[TargetField]
+
+    def __post_init__(self) -> None:
+        ids = [f.id for f in self.fields]
+        if len(ids) != len(set(ids)):
+            raise ValueError("TargetSchema field ids must be unique")
 
 
 @dataclass(frozen=True, slots=True)
