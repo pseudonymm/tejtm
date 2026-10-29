@@ -20,6 +20,7 @@ This folder also holds research, the wayfinder map index, glossary, and the prod
 | [primary-sources.md](./primary-sources.md) | Bibliography URLs |
 | [specs/schema-mapping-spec.md](./specs/schema-mapping-spec.md) | Product spec (`ready-for-agent`) |
 
-## Wayfinder map
+## Wayfinder maps
 
-Decision tickets live under [`.scratch/schema-mapping/`](../.scratch/schema-mapping/map.md). Open grilling tickets cover assignment policy and v1 scope.
+- [schema-mapping](../.scratch/schema-mapping/map.md) is the v1 library destination.
+- [leftover classical text methods](../.scratch/classical-nlp-mapping/map.md) is the keep, defer, or reject list for cheap non-neural methods still not wired.

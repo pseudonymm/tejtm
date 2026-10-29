@@ -5,16 +5,24 @@ tejtm maps messy import columns to a target schema you define. It returns one-to
 ## Install
 
 ```bash
-pip install -e ".[dev]"
+pip install tejtm
 ```
 
 Optional extras:
 
 ```bash
-pip install -e ".[semantic,pydantic,yaml]"
+pip install "tejtm[semantic,pydantic,yaml]"
 ```
 
 `semantic` adds FastEmbed header similarity. `pydantic` builds a target schema from a model. `yaml` saves mapping results.
+
+From a clone, for local development:
+
+```bash
+pip install -e ".[dev]"
+```
+
+Published package: [tejtm 0.1.0 on PyPI](https://pypi.org/project/tejtm/0.1.0/). Linked docs under `docs/` resolve on GitHub, not on the PyPI project page.
 
 ## Map columns to a target schema
 
